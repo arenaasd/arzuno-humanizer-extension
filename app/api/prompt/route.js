@@ -1,25 +1,16 @@
 import { NextResponse } from "next/server";
 import { GoogleGenAI } from "@google/genai";
 
+// Handle POST requests
 export async function POST(request) {
   const key = process.env.GOOGLE_API_KEY;
-
   const { prompt } = await request.json();
 
-
-  // Ensure the CORS headers are set
-  const responseHeaders = new Headers();
-  responseHeaders.set("Access-Control-Allow-Origin", "*"); // Allow all origins
-  responseHeaders.set("Access-Control-Allow-Methods", "POST");
-  responseHeaders.set("Access-Control-Allow-Headers", "Content-Type");
-
-  // If it's a preflight (OPTIONS) request, return 200 status with CORS headers
-  if (request.method === "OPTIONS") {
-    return new NextResponse(null, {
-      status: 200,
-      headers: responseHeaders,
-    });
-  }
+  const headers = new Headers({
+    "Access-Control-Allow-Origin": "*",
+    "Access-Control-Allow-Methods": "POST, OPTIONS",
+    "Access-Control-Allow-Headers": "Content-Type",
+  });
 
   try {
     const ai = new GoogleGenAI({ apiKey: key });
@@ -30,18 +21,28 @@ export async function POST(request) {
       contents: enhancedPrompt,
     });
 
-    const text = aiResponse.candidates[0].content.parts[0].text;
+    const text = aiResponse.candidates?.[0]?.content?.parts?.[0]?.text || "";
 
-    // Return the response with the appropriate CORS headers
-    return new NextResponse(
-      JSON.stringify({ text }),
-      { status: 200, headers: responseHeaders }
-    );
+    return new NextResponse(JSON.stringify({ text }), {
+      status: 200,
+      headers,
+    });
   } catch (error) {
     console.error("Error during API request:", error);
     return new NextResponse(
-      JSON.stringify({ error: 'An error occurred while processing the prompt.' }),
-      { status: 500, headers: responseHeaders }
+      JSON.stringify({ error: "An error occurred while processing the prompt." }),
+      { status: 500, headers }
     );
   }
+}
+
+// Handle OPTIONS requests (CORS preflight)
+export function OPTIONS() {
+  const headers = new Headers({
+    "Access-Control-Allow-Origin": "*",
+    "Access-Control-Allow-Methods": "POST, OPTIONS",
+    "Access-Control-Allow-Headers": "Content-Type",
+  });
+
+  return new NextResponse(null, { status: 200, headers });
 }
