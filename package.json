@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack",
-    "build": "next build && rm -rf out && mkdir -p out/next && mv .next/* out/next/ && cp public/icon.png out/icon.png && cp -r extension/* out/",
+    "build": "next build",
     "start": "next start",
     "lint": "next lint"
   },
