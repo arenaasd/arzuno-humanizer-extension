@@ -1,0 +1,25 @@
+{
+  "name": "arzuno-extention",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev --turbopack",
+    "build": "next build && rm -rf out && mkdir -p out/next && mv .next/* out/next/ && cp public/icon.png out/icon.png && cp -r extension/* out/",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "@google/genai": "^0.8.0",
+    "axios": "^1.8.4",
+    "next": "15.3.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  },
+  "devDependencies": {
+    "@eslint/eslintrc": "^3",
+    "@tailwindcss/postcss": "^4",
+    "eslint": "^9",
+    "eslint-config-next": "15.3.0",
+    "tailwindcss": "^4"
+  }
+}
