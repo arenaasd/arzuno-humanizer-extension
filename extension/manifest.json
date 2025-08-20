@@ -1,17 +1,27 @@
 {
+  "update_url": "https://clients2.google.com/service/update2/crx",
   "manifest_version": 3,
   "name": "Arzuno Humanizer: Write like a human",
   "version": "1.0",
-  "description": "Arzuno Humanizer helps you rewrite AI-generated or robotic text into natural, human-like language with a single right-click.",
-  "permissions": [],
-  "host_permissions": ["<all_urls>"],
+  "description": "rewrite AI-generated or robotic text into natural, human-like language with a single right-click.",
+  "permissions": [
+    "contextMenus",
+    "identity"
+  ],
+  "host_permissions": [
+    "<all_urls>"
+  ],
   "background": {
     "service_worker": "service-worker.js"
   },
   "content_scripts": [
     {
-      "matches": ["<all_urls>"],
-      "js": ["content.js"]
+      "matches": [
+        "<all_urls>"
+      ],
+      "js": [
+        "content.js"
+      ]
     }
   ],
   "icons": {
@@ -28,10 +38,17 @@
       "128": "icon.png"
     }
   },
+  "content_security_policy": {
+    "extension_pages": "script-src 'self'; object-src 'self'"
+  },
   "web_accessible_resources": [
     {
-      "resources": ["icon.png"],
-      "matches": ["<all_urls>"]
+      "resources": [
+        "icon.png"
+      ],
+      "matches": [
+        "<all_urls>"
+      ]
     }
   ]
 }

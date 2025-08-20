@@ -1,11 +1,490 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Arzuno Humanizer</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      width: 400px;
+      height: 600px;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: #ffffff;
+    }
+
+    .container {
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .header {
+      padding: 20px;
+      text-align: center;
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+    }
+
+    .logo-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    }
+
+    .logo-text {
+      text-align: left;
+    }
+
+    .brand {
+      font-size: 18px;
+      font-weight: bold;
+      color: #ffffff;
+      letter-spacing: 1px;
+    }
+
+    .subtitle {
+      font-size: 12px;
+      color: #ffd700;
+      font-weight: 600;
+      letter-spacing: 2px;
+    }
+
+    /* Premium Status Section */
+    .status-section {
+      padding: 15px 20px;
+      background: rgba(255, 255, 255, 0.05);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .user-status {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+
+    .user-email {
+      font-size: 12px;
+      color: rgba(255, 255, 255, 0.7);
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .premium-badge {
+      padding: 4px 8px;
+      border-radius: 12px;
+      font-size: 10px;
+      font-weight: bold;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .premium-badge.premium {
+      background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%);
+      color: #333;
+    }
+
+    .premium-badge.free {
+      background: rgba(255, 255, 255, 0.2);
+      color: #ffffff;
+    }
+
+    .words-status {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+
+    .words-left {
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .words-left.premium {
+      color: #ffd700;
+    }
+
+    .words-left.warning {
+      color: #ff6b35;
+    }
+
+    .words-left.normal {
+      color: #ffffff;
+    }
+
+    .premium-btn {
+      width: 100%;
+      padding: 10px;
+      background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%);
+      border: none;
+      border-radius: 8px;
+      color: #333;
+      font-size: 13px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .premium-btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 16px rgba(255, 215, 0, 0.4);
+    }
+
+    .premium-btn.hidden {
+      display: none;
+    }
+
+    .refresh-btn {
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      color: white;
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 11px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .refresh-btn:hover {
+      background: rgba(255, 255, 255, 0.2);
+    }
+
+    .content {
+      flex: 1;
+      padding: 20px;
+      overflow-y: auto;
+    }
+
+    .section h3 {
+      margin-bottom: 8px;
+      color: #ffffff;
+      font-size: 18px;
+    }
+
+    .description {
+      margin-bottom: 20px;
+      color: rgba(255, 255, 255, 0.8);
+      font-size: 14px;
+      line-height: 1.4;
+    }
+
+    .input-section {
+      margin-bottom: 20px;
+    }
+
+    textarea {
+      width: 100%;
+      padding: 12px;
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.1);
+      color: #ffffff;
+      font-size: 14px;
+      font-family: inherit;
+      resize: vertical;
+      transition: all 0.3s ease;
+    }
+
+    textarea::placeholder {
+      color: rgba(255, 255, 255, 0.6);
+    }
+
+    textarea:focus {
+      outline: none;
+      border-color: #ffd700;
+      box-shadow: 0 0 0 3px rgba(255, 215, 0, 0.2);
+    }
+
+    .humanize-btn {
+      width: 100%;
+      padding: 14px;
+      margin-top: 12px;
+      background: linear-gradient(135deg, #ff9a56 0%, #ff6b35 100%);
+      border: none;
+      border-radius: 12px;
+      color: white;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .humanize-btn:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(255, 107, 53, 0.4);
+    }
+
+    .humanize-btn:disabled {
+      opacity: 0.7;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .btn-spinner {
+      display: none;
+      width: 20px;
+      height: 20px;
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      border-top: 2px solid white;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .output-section {
+      margin-top: 20px;
+      padding-top: 20px;
+      border-top: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .output-section label {
+      display: block;
+      margin-bottom: 8px;
+      color: #ffd700;
+      font-weight: 600;
+      font-size: 14px;
+    }
+
+    .action-buttons {
+      display: flex;
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    .copy-btn, .clear-btn {
+      flex: 1;
+      padding: 10px;
+      border: none;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .copy-btn {
+      background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+      color: white;
+    }
+
+    .copy-btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3);
+    }
+
+    .clear-btn {
+      background: rgba(255, 255, 255, 0.2);
+      color: white;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+    }
+
+    .clear-btn:hover {
+      background: rgba(255, 255, 255, 0.3);
+      transform: translateY(-1px);
+    }
+
+    .instructions {
+      margin-top: 20px;
+      padding: 15px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .instructions h4 {
+      margin-bottom: 10px;
+      color: #ffd700;
+      font-size: 14px;
+    }
+
+    .instructions ul {
+      list-style: none;
+      padding-left: 0;
+    }
+
+    .instructions li {
+      margin-bottom: 8px;
+      color: rgba(255, 255, 255, 0.9);
+      font-size: 12px;
+      line-height: 1.4;
+      padding-left: 15px;
+      position: relative;
+    }
+
+    .instructions li:before {
+      content: "•";
+      color: #ffd700;
+      position: absolute;
+      left: 0;
+    }
+
+    .instructions strong {
+      color: #ffffff;
+    }
+
+    .footer {
+      padding: 15px 20px;
+      background: rgba(0, 0, 0, 0.2);
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .version {
+      font-size: 12px;
+      color: rgba(255, 255, 255, 0.6);
+    }
+
+    .credits {
+      font-size: 11px;
+      color: rgba(255, 255, 255, 0.7);
+    }
+
+    ::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 3px;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.3);
+      border-radius: 3px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: rgba(255, 255, 255, 0.5);
+    }
+
+    /* Loading state */
+    .loading {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      color: rgba(255, 255, 255, 0.7);
+      font-size: 14px;
+    }
+
+    .error-message {
+      padding: 10px;
+      background: rgba(244, 67, 54, 0.2);
+      border: 1px solid rgba(244, 67, 54, 0.5);
+      border-radius: 8px;
+      color: #ff6b6b;
+      font-size: 12px;
+      margin-bottom: 15px;
+      text-align: center;
+    }
+  </style>
 </head>
 <body>
-    
+  <div class="container">
+    <div class="header">
+      <div class="logo">
+        <img src="icon.png" alt="Arzuno Humanizer" class="logo-icon" />
+        <div class="logo-text">
+          <div class="brand">ARZUNO</div>
+          <div class="subtitle">HUMANIZER</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Premium Status Section -->
+    <div class="status-section">
+      <div id="loadingStatus" class="loading">Loading user data...</div>
+      
+      <div id="userStatus" style="display: none;">
+        <div class="user-status">
+          <div class="user-email" id="userEmail">user@example.com</div>
+          <button class="refresh-btn" id="refreshBtn">🔄 Refresh</button>
+        </div>
+        
+        <div class="words-status">
+          <div class="words-left" id="wordsLeft">0 words left</div>
+          <div class="premium-badge" id="premiumBadge">Free</div>
+        </div>
+        
+        <button class="premium-btn" id="premiumBtn">
+          ⚡ Upgrade to Premium - Unlimited Words
+        </button>
+      </div>
+
+      <div id="errorMessage" class="error-message" style="display: none;"></div>
+    </div>
+
+    <div class="content">
+      <div class="section">
+        <h3>Transform Your Text</h3>
+        <p class="description">
+          Paste your AI-generated or robotic text below to make it sound more natural and human-like.
+        </p>
+
+        <div class="input-section">
+          <textarea id="inputText" placeholder="Paste your text here to humanize..." rows="6"></textarea>
+          <button id="humanizeBtn" class="humanize-btn">
+            <span class="btn-icon">🤖→👤</span>
+            <span class="btn-text">Humanize Text</span>
+            <div class="btn-spinner" id="spinner"></div>
+          </button>
+        </div>
+
+        <div class="output-section" id="outputSection" style="display: none;">
+          <label>Humanized Text:</label>
+          <textarea id="outputText" readonly rows="6"></textarea>
+          <div class="action-buttons">
+            <button id="copyBtn" class="copy-btn">📋 Copy to Clipboard</button>
+            <button id="clearBtn" class="clear-btn">🗑️ Clear All</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="instructions">
+        <h4>💡 How to use:</h4>
+        <ul>
+          <li><strong>Method 1:</strong> Select text on any webpage → Right-click → Choose "Humanize text"</li>
+          <li><strong>Method 2:</strong> Paste text in the box above and click "Humanize Text"</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="footer">
+      <div class="version">v1.0</div>
+      <div class="credits">Made with ❤️ for better writing</div>
+    </div>
+  </div>
+  <script src="popup.js"></script>
 </body>
 </html>
