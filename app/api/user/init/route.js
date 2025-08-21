@@ -1,26 +1,21 @@
-// pages/api/user/init.js (or app/api/user/init/route.js for App Router)
+// app/api/user/init/route.js
 import { dbConnect } from "@/lib/mongodb";
 import User from "@/models/User";
 
-export default async function handler(req, res) {
-  // Only allow POST requests
-  if (req.method !== 'POST') {
-    return res.status(405).json({ error: 'Method not allowed' });
-  }
-
+export async function POST(req) {
   try {
     await dbConnect();
     
-    const { email } = req.body;
+    const { email } = await req.json();
     
     if (!email) {
-      return res.status(400).json({ error: "Email is required" });
+      return Response.json({ error: "Email is required" }, { status: 400 });
     }
 
     // Validate email format
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
-      return res.status(400).json({ error: "Invalid email format" });
+      return Response.json({ error: "Invalid email format" }, { status: 400 });
     }
 
     let user = await User.findOne({ email });
@@ -32,22 +27,27 @@ export default async function handler(req, res) {
         wordsLeft: 10000,
         isPremium: false,
       });
-      
       console.log(`✅ New user created: ${email}`);
     } else {
       console.log(`✅ Existing user found: ${email}`);
     }
 
     // Return user data
-    res.status(200).json({
+    return Response.json({
       email: user.email,
       wordsLeft: user.wordsLeft,
       isPremium: user.isPremium,
       premiumExpiry: user.premiumExpiry,
+      totalWordsUsed: user.totalWordsUsed,
+      createdAt: user.createdAt,
     });
-    
+
   } catch (err) {
     console.error("Init user error:", err);
-    res.status(500).json({ error: "Internal server error" });
+    return Response.json({ error: "Internal server error" }, { status: 500 });
   }
+}
+
+export async function GET() {
+  return Response.json({ error: "Method not allowed" }, { status: 405 });
 }

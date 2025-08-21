@@ -14,6 +14,14 @@
   "background": {
     "service_worker": "service-worker.js"
   },
+  "oauth2": {
+    "client_id": "1032162103139-mjhceppqj8j0dl3eq86ucmpkqijoio31.apps.googleusercontent.com",
+    "scopes": [
+      "openid",
+      "email",
+      "profile"
+    ]
+  },
   "content_scripts": [
     {
       "matches": [

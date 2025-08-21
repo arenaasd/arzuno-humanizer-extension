@@ -1,63 +1,77 @@
-// pages/api/user/update-words.js (or app/api/user/update-words/route.js for App Router)
+// app/api/user/update-words/route.js
 import { dbConnect } from "@/lib/mongodb";
 import User from "@/models/User";
 
-export default async function handler(req, res) {
-  // Only allow POST requests
-  if (req.method !== 'POST') {
-    return res.status(405).json({ error: 'Method not allowed' });
-  }
-
+export async function POST(req) {
   try {
     await dbConnect();
     
-    const { email, wordsUsed } = req.body;
+    const { email, wordsUsed } = await req.json();
     
     if (!email || typeof wordsUsed !== 'number') {
-      return res.status(400).json({ error: "Email and wordsUsed are required" });
+      return Response.json({ error: "Email and wordsUsed are required" }, { status: 400 });
     }
 
     if (wordsUsed < 0) {
-      return res.status(400).json({ error: "Words used cannot be negative" });
+      return Response.json({ error: "Words used cannot be negative" }, { status: 400 });
     }
 
     const user = await User.findOne({ email });
     
     if (!user) {
-      return res.status(404).json({ error: "User not found" });
+      return Response.json({ error: "User not found" }, { status: 404 });
     }
 
     // Check if user is premium and premium is active
     const isPremium = user.isPremium && user.premiumExpiry && new Date(user.premiumExpiry) > new Date();
     
     if (isPremium) {
-      // Premium users don't lose words
-      return res.status(200).json({
+      // Premium users don't lose words but we still track total usage
+      await User.updateOne(
+        { email },
+        { 
+          totalWordsUsed: user.totalWordsUsed + wordsUsed,
+          lastUsed: new Date()
+        }
+      );
+      
+      return Response.json({
         message: "Premium user - no words deducted",
         wordsLeft: user.wordsLeft,
+        totalWordsUsed: user.totalWordsUsed + wordsUsed,
         isPremium: true
       });
     }
 
     // Update words for free users
     const newWordsLeft = Math.max(0, user.wordsLeft - wordsUsed);
+    const newTotalWordsUsed = user.totalWordsUsed + wordsUsed;
     
     await User.updateOne(
       { email },
-      { wordsLeft: newWordsLeft }
+      { 
+        wordsLeft: newWordsLeft,
+        totalWordsUsed: newTotalWordsUsed,
+        lastUsed: new Date()
+      }
     );
 
     console.log(`🔢 Words updated for ${email}: ${user.wordsLeft} -> ${newWordsLeft} (used: ${wordsUsed})`);
 
-    res.status(200).json({
+    return Response.json({
       message: "Words updated successfully",
       wordsLeft: newWordsLeft,
       wordsUsed: wordsUsed,
+      totalWordsUsed: newTotalWordsUsed,
       isPremium: false
     });
-    
+
   } catch (err) {
     console.error("Update words error:", err);
-    res.status(500).json({ error: "Internal server error" });
+    return Response.json({ error: "Internal server error" }, { status: 500 });
   }
+}
+
+export async function GET() {
+  return Response.json({ error: "Method not allowed" }, { status: 405 });
 }
