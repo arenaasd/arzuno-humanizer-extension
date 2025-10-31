@@ -1,4 +1,4 @@
-// popup.js - Updated with authentication system
+// popup.js - Updated with premium tone restrictions
 
 // DOM Elements
 const authSection = document.getElementById('authSection');
@@ -7,7 +7,7 @@ const mainContent = document.getElementById('mainContent');
 const loginBtn = document.getElementById('loginBtn');
 const logoutBtn = document.getElementById('logoutBtn');
 const authError = document.getElementById('authError');
-const authSuccess = document.getElementById('authSuccess');
+const authSuccess = document.getElementById('authSuccess'); 
 
 // Main content elements
 const inputText = document.getElementById('inputText');
@@ -19,6 +19,7 @@ const outputSection = document.getElementById('outputSection');
 const spinner = document.getElementById('spinner');
 const btnText = humanizeBtn.querySelector('.btn-text');
 const btnIcon = humanizeBtn.querySelector('.btn-icon');
+const toneSelect = document.getElementById('toneSelect');
 
 // Premium elements
 const loadingStatus = document.getElementById('loadingStatus');
@@ -33,11 +34,31 @@ const errorMessage = document.getElementById('errorMessage');
 // User data
 let currentUser = null;
 let isLoggedIn = false;
+let isPremiumUser = false;
 
 // Initialize the popup
 document.addEventListener('DOMContentLoaded', function() {
     checkAuthState();
+    setupToneSelectListener();
 });
+
+// Setup tone select listener
+function setupToneSelectListener() {
+    toneSelect.addEventListener('change', function() {
+        const selectedOption = toneSelect.options[toneSelect.selectedIndex];
+        const isPremiumTone = selectedOption.getAttribute('data-premium') === 'true';
+        
+        if (isPremiumTone && !isPremiumUser) {
+            showNotification('⭐ This tone is only available for Premium users', true);
+            // Reset to default
+            toneSelect.value = 'default';
+            // Open premium page
+            setTimeout(() => {
+                handlePremiumClick();
+            }, 500);
+        }
+    });
+}
 
 // Check authentication state
 async function checkAuthState() {
@@ -77,6 +98,7 @@ function showLoginScreen() {
     statusSection.classList.add('hidden');
     mainContent.classList.add('disabled');
     isLoggedIn = false;
+    isPremiumUser = false;
 }
 
 // Show authenticated screen
@@ -97,6 +119,7 @@ async function initializeAuthenticatedUser(email) {
                 currentUser = response.user;
                 showAuthenticatedScreen();
                 updateUserDisplay();
+                updatePremiumToneOptions();
                 showSuccessMessage(`Welcome back, ${email.split('@')[0]}!`);
             } else {
                 showErrorMessage('Failed to initialize user. Please try again.');
@@ -107,6 +130,34 @@ async function initializeAuthenticatedUser(email) {
         console.error('Failed to initialize user:', error);
         showErrorMessage('Failed to initialize user. Please try again.');
         showLoginScreen();
+    }
+}
+
+// Update premium tone options based on user status
+function updatePremiumToneOptions() {
+    const options = toneSelect.querySelectorAll('option[data-premium="true"]');
+    
+    console.log('Updating tone options. isPremiumUser:', isPremiumUser);
+    
+    if (!isPremiumUser) {
+        // Disable premium options for free users
+        options.forEach(option => {
+            option.disabled = true;
+            // Ensure premium label is shown
+            if (!option.textContent.includes('⭐ Premium')) {
+                const baseText = option.textContent.replace(' ⭐ Premium', '');
+                option.textContent = baseText + ' ⭐ Premium';
+            }
+        });
+        console.log('Premium tones disabled for free user');
+    } else {
+        // Enable all options for premium users
+        options.forEach(option => {
+            option.disabled = false;
+            // Remove premium badge text for premium users
+            option.textContent = option.textContent.replace(' ⭐ Premium', '');
+        });
+        console.log('✅ All tones enabled for premium user');
     }
 }
 
@@ -170,11 +221,13 @@ async function handleLogout() {
                     // Clear user data
                     currentUser = null;
                     isLoggedIn = false;
+                    isPremiumUser = false;
                     
                     // Reset UI
                     inputText.value = '';
                     outputText.value = '';
                     outputSection.classList.add('hidden');
+                    toneSelect.value = 'default';
                     
                     // Show login screen
                     showLoginScreen();
@@ -188,6 +241,7 @@ async function handleLogout() {
                 // No token to revoke, just clear state
                 currentUser = null;
                 isLoggedIn = false;
+                isPremiumUser = false;
                 showLoginScreen();
             }
         });
@@ -221,34 +275,78 @@ function updateUserDisplay() {
     // Update user email
     userEmail.textContent = currentUser.email || 'Unknown user';
     
-    // Update premium status
-    const isPremium = currentUser.isPremium && currentUser.premiumExpiry && 
-                     new Date(currentUser.premiumExpiry) > new Date();
+    console.log('Updating user display:', {
+        email: currentUser.email,
+        isPremium: currentUser.isPremium,
+        premiumExpiry: currentUser.premiumExpiry,
+        wordsLeft: currentUser.wordsLeft
+    });
     
-    if (isPremium) {
-        premiumBadge.textContent = 'Premium';
+    // Update premium status (check both isPremium and premiumExpiry)
+    isPremiumUser = false;
+    
+    if (currentUser.isPremium) {
+        // If premiumExpiry exists, check if it's valid
+        if (currentUser.premiumExpiry) {
+            const expiryDate = new Date(currentUser.premiumExpiry);
+            const now = new Date();
+            isPremiumUser = expiryDate > now;
+            console.log('Premium expiry check:', {
+                expiryDate: expiryDate.toISOString(),
+                now: now.toISOString(),
+                isPremiumUser: isPremiumUser
+            });
+        } else {
+            // No expiry set, just trust isPremium flag
+            isPremiumUser = true;
+            console.log('Premium user (no expiry set)');
+        }
+    }
+    
+    console.log('Final isPremiumUser:', isPremiumUser);
+    
+    const premiumStatusCard = document.getElementById('premiumStatusCard');
+    
+    if (isPremiumUser) {
+        // Update premium status card styling
+        premiumStatusCard.classList.remove('free');
+        premiumStatusCard.classList.add('premium');
+        
+        premiumBadge.textContent = '⭐ Premium';
         premiumBadge.className = 'premium-badge premium';
-        wordsLeft.textContent = '∞ Unlimited words';
+        wordsLeft.textContent = '∞ Unlimited';
         wordsLeft.className = 'words-left premium';
         premiumBtn.classList.add('hidden');
+        humanizeBtn.disabled = false;
+        console.log('✅ Displaying as Premium user');
     } else {
+        // Update free status card styling
+        premiumStatusCard.classList.remove('premium');
+        premiumStatusCard.classList.add('free');
+        
         premiumBadge.textContent = 'Free';
         premiumBadge.className = 'premium-badge free';
         
         const words = currentUser.wordsLeft || 0;
-        wordsLeft.textContent = `${words} words left`;
+        wordsLeft.textContent = `${words.toLocaleString()} words`;
         
         if (words <= 0) {
             wordsLeft.className = 'words-left warning';
             humanizeBtn.disabled = true;
         } else if (words <= 500) {
             wordsLeft.className = 'words-left warning';
+            humanizeBtn.disabled = false;
         } else {
             wordsLeft.className = 'words-left normal';
+            humanizeBtn.disabled = false;
         }
         
         premiumBtn.classList.remove('hidden');
+        console.log('Displaying as Free user with', words, 'words');
     }
+    
+    // Update tone options based on premium status
+    updatePremiumToneOptions();
 }
 
 // Show auth error
@@ -358,15 +456,11 @@ function canUseService(text) {
         return { allowed: false, message: 'Please sign in to use this extension' };
     }
     
-    // Check if premium and not expired
-    const isPremium = currentUser.isPremium && currentUser.premiumExpiry && 
-                     new Date(currentUser.premiumExpiry) > new Date();
-    
-    if (isPremium) {
+    // Check word limit for free users
+    if (isPremiumUser) {
         return { allowed: true }; // Premium users have unlimited access
     }
     
-    // Check word limit for free users
     const wordCount = countWords(text);
     if (currentUser.wordsLeft >= wordCount) {
         return { allowed: true };
@@ -416,10 +510,23 @@ async function humanizeText(text) {
         return;
     }
     
-    // Check if user can use the service
+ if (isPremiumUser) {
+    console.log("⭐ Premium user - unlimited words, skipping word check");
+} else {
     const canUse = canUseService(text);
     if (!canUse.allowed) {
         showNotification(canUse.message, true);
+        return;
+    }
+}
+
+    // Get selected tone
+    const selectedTone = toneSelect.value;
+    
+    // Double-check premium tone restriction
+    if (selectedTone !== 'default' && !isPremiumUser) {
+        showNotification('⭐ Premium tones are only available for Premium users', true);
+        toneSelect.value = 'default';
         return;
     }
     
@@ -429,7 +536,8 @@ async function humanizeText(text) {
         // Send message to service worker to handle the API call
         chrome.runtime.sendMessage({
             type: 'enhance-prompt',
-            prompt: text
+            prompt: text,
+            tone: selectedTone
         }, (response) => {
             hideLoading();
             
@@ -451,12 +559,18 @@ async function humanizeText(text) {
             // Scroll to output
             outputSection.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
             
-            showNotification('✅ Text humanized successfully!');
+            if (isPremiumUser) {
+                showNotification('✅ Text humanized successfully! (Unlimited)');
+            } else {
+                showNotification('✅ Text humanized successfully!');
+            }
             
-            // Refresh user data after humanization to show updated word count
-            setTimeout(() => {
-                loadUserData();
-            }, 500);
+            // Only refresh user data for free users (to update word count)
+            if (!isPremiumUser) {
+                setTimeout(() => {
+                    loadUserData();
+                }, 500);
+            }
         });
         
     } catch (error) {
@@ -508,9 +622,8 @@ async function refreshUserData() {
 
 // Handle premium button click
 function handlePremiumClick() {
-    // Open premium page - you can replace this with your actual premium page URL
-    const premiumUrl = 'https://arzuno-humanizer.vercel.app/premium';
-    chrome.tabs.create({ url: premiumUrl });
+    // Open premium page
+   showNotification("Premium is not available yet. Contact support: arzunoteam@gmail.com to get premium access.", true);
 }
 
 // Event Listeners
@@ -539,6 +652,7 @@ clearBtn.addEventListener('click', () => {
     inputText.value = '';
     outputText.value = '';
     outputSection.classList.add('hidden');
+    toneSelect.value = 'default';
     if (isLoggedIn) {
         inputText.focus();
     }

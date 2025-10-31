@@ -1,3 +1,7 @@
+// app/api/prompt/route.js
+// This shows the updated API route structure
+// Your current API should work fine since we send the complete prompt from frontend
+
 import { NextResponse } from "next/server";
 import { GoogleGenAI } from "@google/genai";
 
@@ -14,11 +18,12 @@ export async function POST(request) {
 
   try {
     const ai = new GoogleGenAI({ apiKey: key });
-    const enhancedPrompt = `Rewrite the following text to make it sound more natural, fluent, and human-like. Use everyday conversational language while preserving the original meaning. Avoid robotic or overly formal phrasing. Return only the rewritten version without any explanation or labels. Text: "${prompt}"`;
-
+    
+    // The prompt is already formatted with tone instructions from the service worker
+    // So we just pass it directly to the AI model
     const aiResponse = await ai.models.generateContent({
       model: "gemini-2.0-flash",
-      contents: enhancedPrompt,
+      contents: prompt,
     });
 
     const text = aiResponse.candidates?.[0]?.content?.parts?.[0]?.text || "";

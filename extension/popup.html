@@ -14,80 +14,122 @@
     body {
       width: 400px;
       height: 600px;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: #0a0e27;
       color: #ffffff;
+      overflow: hidden;
     }
 
     .container {
       height: 100%;
       display: flex;
       flex-direction: column;
+      background: linear-gradient(135deg, #2F3061 0%, #1a1d3a 50%, #0a0e27 100%);
+      position: relative;
+    }
+
+    /* Animated background pattern */
+    .container::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: 
+        radial-gradient(circle at 20% 50%, rgba(139, 92, 246, 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 80% 80%, rgba(59, 130, 246, 0.1) 0%, transparent 50%);
+      pointer-events: none;
+      animation: pulse 8s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 0.5; }
+      50% { opacity: 1; }
     }
 
     .header {
-      padding: 20px;
-      text-align: center;
-      background: rgba(255, 255, 255, 0.1);
-      backdrop-filter: blur(10px);
-      border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+      padding: 20px 24px;
+      background: rgba(255, 255, 255, 0.03);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      position: relative;
+      z-index: 1;
     }
 
     .logo {
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 12px;
+      gap: 14px;
     }
 
     .logo-icon {
-      width: 40px;
-      height: 40px;
-      border-radius: 50%;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+      width: 42px;
+      height: 42px;
+      border-radius: 12px;
+      box-shadow: 0 8px 24px rgba(139, 92, 246, 0.4);
+      border: 2px solid rgba(139, 92, 246, 0.3);
     }
 
     .logo-text {
       text-align: left;
     }
 
+   .btn-icon img {
+    width: 20px; /* Change to desired width */
+    border-radius: 5px;
+    height: 20px; /* Change to desired height */
+    object-fit: contain;
+  } 
+
     .brand {
-      font-size: 18px;
-      font-weight: bold;
-      color: #ffffff;
-      letter-spacing: 1px;
+      font-size: 20px;
+      font-weight: 800;
+      background: linear-gradient(135deg, #8b5cf6 0%, #3b82f6 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      letter-spacing: 0.5px;
     }
 
     .subtitle {
-      font-size: 12px;
-      color: #ffd700;
+      font-size: 11px;
+      color: #94a3b8;
       font-weight: 600;
       letter-spacing: 2px;
+      text-transform: uppercase;
     }
 
     /* Authentication Section */
     .auth-section {
-      padding: 20px;
+      padding: 40px 24px;
       text-align: center;
       flex: 1;
       display: flex;
       flex-direction: column;
       justify-content: center;
       align-items: center;
+      position: relative;
+      z-index: 1;
     }
 
     .auth-section h2 {
-      margin-bottom: 15px;
-      font-size: 20px;
-      color: #ffffff;
+      margin-bottom: 12px;
+      font-size: 24px;
+      font-weight: 700;
+      background: linear-gradient(135deg, #ffffff 0%, #cbd5e1 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
     }
 
     .auth-section p {
-      margin-bottom: 25px;
-      color: rgba(255, 255, 255, 0.8);
+      margin-bottom: 32px;
+      color: #94a3b8;
       font-size: 14px;
-      line-height: 1.5;
-      max-width: 300px;
+      line-height: 1.6;
+      max-width: 320px;
     }
 
     .login-btn {
@@ -95,26 +137,43 @@
       align-items: center;
       justify-content: center;
       gap: 12px;
-      padding: 14px 24px;
-      background: #ffffff;
-      color: #333;
+      padding: 16px 32px;
+      background: linear-gradient(135deg, #8b5cf6 0%, #6366f1 100%);
+      color: #ffffff;
       border: none;
-      border-radius: 12px;
-      font-size: 16px;
+      border-radius: 14px;
+      font-size: 15px;
       font-weight: 600;
       cursor: pointer;
-      transition: all 0.3s ease;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-      min-width: 200px;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 0 8px 24px rgba(139, 92, 246, 0.4);
+      min-width: 240px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .login-btn::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+      transition: left 0.5s;
+    }
+
+    .login-btn:hover::before {
+      left: 100%;
     }
 
     .login-btn:hover {
       transform: translateY(-2px);
-      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3);
+      box-shadow: 0 12px 32px rgba(139, 92, 246, 0.5);
     }
 
     .login-btn:disabled {
-      opacity: 0.7;
+      opacity: 0.6;
       cursor: not-allowed;
       transform: none;
     }
@@ -124,33 +183,54 @@
       height: 20px;
     }
 
-    /* Premium Status Section */
+    /* Status Section */
     .status-section {
-      padding: 15px 20px;
-      background: rgba(255, 255, 255, 0.05);
-      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 20px 24px;
+      background: rgba(255, 255, 255, 0.02);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      position: relative;
+      z-index: 1;
     }
 
     .user-status {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 10px;
+      margin-bottom: 16px;
     }
 
     .user-info {
       display: flex;
-      flex-direction: column;
-      align-items: flex-start;
+      align-items: center;
+      gap: 12px;
+      flex: 1;
+    }
+
+    .user-avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, #8b5cf6 0%, #6366f1 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 14px;
+      box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3);
+    }
+
+    .user-details {
       flex: 1;
     }
 
     .user-email {
-      font-size: 12px;
-      color: rgba(255, 255, 255, 0.7);
+      font-size: 13px;
+      color: #e2e8f0;
       overflow: hidden;
       text-overflow: ellipsis;
-      max-width: 200px;
+      max-width: 180px;
+      font-weight: 500;
+      white-space: nowrap;
     }
 
     .user-actions {
@@ -160,192 +240,325 @@
     }
 
     .logout-btn {
-      background: rgba(255, 255, 255, 0.1);
-      border: 1px solid rgba(255, 255, 255, 0.3);
-      color: white;
-      padding: 6px 10px;
-      border-radius: 6px;
-      font-size: 11px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: #cbd5e1;
+      padding: 8px 14px;
+      border-radius: 10px;
+      font-size: 12px;
       cursor: pointer;
       transition: all 0.3s ease;
+      font-weight: 500;
     }
 
     .logout-btn:hover {
-      background: rgba(255, 255, 255, 0.2);
-    }
-
-    .premium-badge {
-      padding: 4px 8px;
-      border-radius: 12px;
-      font-size: 10px;
-      font-weight: bold;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-    }
-
-    .premium-badge.premium {
-      background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%);
-      color: #333;
-    }
-
-    .premium-badge.free {
-      background: rgba(255, 255, 255, 0.2);
+      background: rgba(255, 255, 255, 0.1);
+      border-color: rgba(255, 255, 255, 0.2);
       color: #ffffff;
-    }
-
-    .words-status {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 10px;
-    }
-
-    .words-left {
-      font-size: 14px;
-      font-weight: 600;
-    }
-
-    .words-left.premium {
-      color: #ffd700;
-    }
-
-    .words-left.warning {
-      color: #ff6b35;
-    }
-
-    .words-left.normal {
-      color: #ffffff;
-    }
-
-    .premium-btn {
-      width: 100%;
-      padding: 10px;
-      background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%);
-      border: none;
-      border-radius: 8px;
-      color: #333;
-      font-size: 13px;
-      font-weight: bold;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-    }
-
-    .premium-btn:hover {
-      transform: translateY(-1px);
-      box-shadow: 0 6px 16px rgba(255, 215, 0, 0.4);
-    }
-
-    .premium-btn.hidden {
-      display: none;
     }
 
     .refresh-btn {
-      background: rgba(255, 255, 255, 0.1);
-      border: 1px solid rgba(255, 255, 255, 0.3);
-      color: white;
-      padding: 6px 12px;
-      border-radius: 6px;
-      font-size: 11px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: #cbd5e1;
+      padding: 8px 10px;
+      border-radius: 10px;
       cursor: pointer;
       transition: all 0.3s ease;
+      line-height: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 34px;
+      height: 34px;
     }
 
     .refresh-btn:hover {
-      background: rgba(255, 255, 255, 0.2);
+      background: rgba(255, 255, 255, 0.1);
     }
 
+    .refresh-btn svg {
+      width: 16px;
+      height: 16px;
+      transition: transform 0.3s ease;
+    }
+
+    .refresh-btn:hover svg {
+      transform: rotate(180deg);
+    }
+
+    /* Premium Badge */
+    .premium-status {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px;
+      border-radius: 14px;
+      margin-bottom: 16px;
+      transition: all 0.3s ease;
+    }
+
+    .premium-status.premium {
+      background: linear-gradient(135deg, rgba(251, 191, 36, 0.15) 0%, rgba(245, 158, 11, 0.15) 100%);
+      border: 1px solid rgba(251, 191, 36, 0.3);
+    }
+
+    .premium-status.free {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .words-info {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .words-label {
+      font-size: 11px;
+      color: #94a3b8;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      font-weight: 600;
+    }
+
+    .words-left {
+      font-size: 18px;
+      font-weight: 700;
+    }
+
+    .words-left.premium {
+      background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .words-left.warning {
+      color: #f87171;
+      animation: pulse-warning 2s infinite;
+    }
+
+    .words-left.normal {
+      color: #e2e8f0;
+    }
+
+    @keyframes pulse-warning {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.6; }
+    }
+
+    .premium-badge {
+      padding: 8px 16px;
+      border-radius: 10px;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .premium-badge.premium {
+      background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+      color: #1e293b;
+      box-shadow: 0 4px 16px rgba(251, 191, 36, 0.4);
+    }
+
+    .premium-badge.free {
+      background: rgba(255, 255, 255, 0.08);
+      color: #94a3b8;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    /* Content Section */
     .content {
       flex: 1;
-      padding: 20px;
+      padding: 24px;
       overflow-y: auto;
+      position: relative;
+      z-index: 1;
     }
 
     .content.disabled {
-      opacity: 0.5;
+      opacity: 0.4;
       pointer-events: none;
     }
 
     .section h3 {
       margin-bottom: 8px;
-      color: #ffffff;
+      color: #e2e8f0;
       font-size: 18px;
+      font-weight: 700;
     }
 
     .description {
       margin-bottom: 20px;
-      color: rgba(255, 255, 255, 0.8);
-      font-size: 14px;
-      line-height: 1.4;
+      color: #94a3b8;
+      font-size: 13px;
+      line-height: 1.5;
     }
 
     .input-section {
       margin-bottom: 20px;
     }
 
+    /* Tone Selector Styles */
+    .tone-selector {
+      margin-bottom: 12px;
+      position: relative;
+    }
+
+    .tone-selector label {
+      display: block;
+      margin-bottom: 8px;
+      color: #e2e8f0;
+      font-size: 13px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .tone-select-wrapper {
+      position: relative;
+    }
+
+    .tone-select {
+      width: 100%;
+      padding: 12px 40px 12px 14px;
+      border: 1px solid rgba(139, 92, 246, 0.2);
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.03);
+      color: #e2e8f0;
+      font-size: 14px;
+      font-family: inherit;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      appearance: none;
+    }
+
+    .tone-select:hover {
+      border-color: rgba(139, 92, 246, 0.4);
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    .tone-select:focus {
+      outline: none;
+      border-color: #8b5cf6;
+      background: rgba(255, 255, 255, 0.05);
+      box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1);
+    }
+
+    .tone-select option {
+      background: #1a1d3a;
+      color: #e2e8f0;
+      padding: 10px;
+    }
+
+    .tone-select option:disabled {
+      color: #64748b;
+    }
+
+    .select-arrow {
+      position: absolute;
+      right: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      pointer-events: none;
+      width: 12px;
+      height: 12px;
+    }
+
     textarea {
       width: 100%;
-      padding: 12px;
-      border: 2px solid rgba(255, 255, 255, 0.3);
+      padding: 14px;
+      border: 1px solid rgba(139, 92, 246, 0.2);
       border-radius: 12px;
-      background: rgba(255, 255, 255, 0.1);
-      color: #ffffff;
+      background: rgba(255, 255, 255, 0.03);
+      color: #e2e8f0;
       font-size: 14px;
       font-family: inherit;
       resize: vertical;
       transition: all 0.3s ease;
+      line-height: 1.6;
     }
 
     textarea::placeholder {
-      color: rgba(255, 255, 255, 0.6);
+      color: #64748b;
     }
 
     textarea:focus {
       outline: none;
-      border-color: #ffd700;
-      box-shadow: 0 0 0 3px rgba(255, 215, 0, 0.2);
+      border-color: #8b5cf6;
+      background: rgba(255, 255, 255, 0.05);
+      box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1);
     }
 
     .humanize-btn {
       width: 100%;
-      padding: 14px;
+      padding: 16px;
       margin-top: 12px;
-      background: linear-gradient(135deg, #ff9a56 0%, #ff6b35 100%);
+      background: linear-gradient(135deg, #8b5cf6 0%, #6366f1 100%);
       border: none;
       border-radius: 12px;
       color: white;
-      font-size: 16px;
+      font-size: 15px;
       font-weight: 600;
       cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 8px;
+      gap: 10px;
       transition: all 0.3s ease;
       position: relative;
       overflow: hidden;
+      box-shadow: 0 4px 16px rgba(139, 92, 246, 0.3);
+    }
+
+    .humanize-btn::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+      transition: left 0.5s;
+    }
+
+    .humanize-btn:hover:not(:disabled)::before {
+      left: 100%;
     }
 
     .humanize-btn:hover:not(:disabled) {
       transform: translateY(-2px);
-      box-shadow: 0 8px 20px rgba(255, 107, 53, 0.4);
+      box-shadow: 0 8px 24px rgba(139, 92, 246, 0.4);
     }
 
     .humanize-btn:disabled {
-      opacity: 0.7;
+      opacity: 0.5;
       cursor: not-allowed;
       transform: none;
+      background: rgba(139, 92, 246, 0.3);
+    }
+
+    .btn-icon {
+      width: 20px;
+      height: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
 
     .btn-spinner {
       display: none;
-      width: 20px;
-      height: 20px;
+      width: 18px;
+      height: 18px;
       border: 2px solid rgba(255, 255, 255, 0.3);
       border-top: 2px solid white;
       border-radius: 50%;
-      animation: spin 1s linear infinite;
+      animation: spin 0.8s linear infinite;
     }
 
     @keyframes spin {
@@ -356,15 +569,17 @@
     .output-section {
       margin-top: 20px;
       padding-top: 20px;
-      border-top: 1px solid rgba(255, 255, 255, 0.2);
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
     }
 
     .output-section label {
       display: block;
-      margin-bottom: 8px;
-      color: #ffd700;
+      margin-bottom: 10px;
+      color: #8b5cf6;
       font-weight: 600;
-      font-size: 14px;
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
     }
 
     .action-buttons {
@@ -375,48 +590,63 @@
 
     .copy-btn, .clear-btn {
       flex: 1;
-      padding: 10px;
+      padding: 12px;
       border: none;
-      border-radius: 8px;
-      font-size: 14px;
-      font-weight: 500;
+      border-radius: 10px;
+      font-size: 13px;
+      font-weight: 600;
       cursor: pointer;
       transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
     }
 
     .copy-btn {
-      background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
       color: white;
+      box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
     }
 
     .copy-btn:hover {
-      transform: translateY(-1px);
-      box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(16, 185, 129, 0.4);
+    }
+
+    .copy-btn svg,
+    .clear-btn svg {
+      width: 16px;
+      height: 16px;
     }
 
     .clear-btn {
-      background: rgba(255, 255, 255, 0.2);
-      color: white;
-      border: 1px solid rgba(255, 255, 255, 0.3);
+      background: rgba(255, 255, 255, 0.05);
+      color: #cbd5e1;
+      border: 1px solid rgba(255, 255, 255, 0.1);
     }
 
     .clear-btn:hover {
-      background: rgba(255, 255, 255, 0.3);
-      transform: translateY(-1px);
+      background: rgba(255, 255, 255, 0.1);
+      border-color: rgba(255, 255, 255, 0.2);
+      transform: translateY(-2px);
     }
 
     .instructions {
       margin-top: 20px;
-      padding: 15px;
-      background: rgba(255, 255, 255, 0.1);
+      padding: 16px;
+      background: rgba(139, 92, 246, 0.08);
       border-radius: 12px;
-      border: 1px solid rgba(255, 255, 255, 0.2);
+      border: 1px solid rgba(139, 92, 246, 0.2);
     }
 
     .instructions h4 {
-      margin-bottom: 10px;
-      color: #ffd700;
-      font-size: 14px;
+      margin-bottom: 12px;
+      color: #8b5cf6;
+      font-size: 13px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
     }
 
     .instructions ul {
@@ -425,42 +655,100 @@
     }
 
     .instructions li {
-      margin-bottom: 8px;
-      color: rgba(255, 255, 255, 0.9);
+      margin-bottom: 10px;
+      color: #cbd5e1;
       font-size: 12px;
-      line-height: 1.4;
-      padding-left: 15px;
+      line-height: 1.5;
+      padding-left: 20px;
       position: relative;
     }
 
     .instructions li:before {
-      content: "•";
-      color: #ffd700;
+      content: "→";
+      color: #8b5cf6;
       position: absolute;
       left: 0;
+      font-weight: 700;
     }
 
     .instructions strong {
-      color: #ffffff;
+      color: #e2e8f0;
+      font-weight: 600;
+    }
+
+    /* Premium Button */
+    .premium-btn {
+      width: 100%;
+      padding: 14px;
+      background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+      border: none;
+      border-radius: 12px;
+      color: #1e293b;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      box-shadow: 0 4px 16px rgba(251, 191, 36, 0.4);
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .premium-btn svg {
+      width: 18px;
+      height: 18px;
+    }
+
+    .premium-btn::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+      transition: left 0.5s;
+    }
+
+    .premium-btn:hover::before {
+      left: 100%;
+    }
+
+    .premium-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(251, 191, 36, 0.5);
+    }
+
+    .premium-btn.hidden {
+      display: none;
     }
 
     .footer {
-      padding: 15px 20px;
-      background: rgba(0, 0, 0, 0.2);
-      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 16px 24px;
+      background: rgba(0, 0, 0, 0.3);
+      border-top: 1px solid rgba(255, 255, 255, 0.06);
       display: flex;
       justify-content: space-between;
       align-items: center;
+      position: relative;
+      z-index: 1;
     }
 
     .version {
-      font-size: 12px;
-      color: rgba(255, 255, 255, 0.6);
+      font-size: 11px;
+      color: #64748b;
+      font-weight: 500;
     }
 
     .credits {
       font-size: 11px;
-      color: rgba(255, 255, 255, 0.7);
+      color: #64748b;
+      font-weight: 500;
     }
 
     ::-webkit-scrollbar {
@@ -468,17 +756,17 @@
     }
 
     ::-webkit-scrollbar-track {
-      background: rgba(255, 255, 255, 0.1);
+      background: rgba(255, 255, 255, 0.03);
       border-radius: 3px;
     }
 
     ::-webkit-scrollbar-thumb {
-      background: rgba(255, 255, 255, 0.3);
+      background: rgba(139, 92, 246, 0.3);
       border-radius: 3px;
     }
 
     ::-webkit-scrollbar-thumb:hover {
-      background: rgba(255, 255, 255, 0.5);
+      background: rgba(139, 92, 246, 0.5);
     }
 
     /* Loading state */
@@ -487,41 +775,44 @@
       align-items: center;
       justify-content: center;
       padding: 20px;
-      color: rgba(255, 255, 255, 0.7);
-      font-size: 14px;
+      color: #94a3b8;
+      font-size: 13px;
+      font-weight: 500;
     }
 
     .loading-spinner {
       display: inline-block;
       width: 16px;
       height: 16px;
-      border: 2px solid rgba(255, 255, 255, 0.3);
-      border-top: 2px solid white;
+      border: 2px solid rgba(139, 92, 246, 0.3);
+      border-top: 2px solid #8b5cf6;
       border-radius: 50%;
-      animation: spin 1s linear infinite;
+      animation: spin 0.8s linear infinite;
       margin-right: 10px;
     }
 
     .error-message {
-      padding: 10px;
-      background: rgba(244, 67, 54, 0.2);
-      border: 1px solid rgba(244, 67, 54, 0.5);
-      border-radius: 8px;
-      color: #ff6b6b;
+      padding: 12px;
+      background: rgba(239, 68, 68, 0.1);
+      border: 1px solid rgba(239, 68, 68, 0.3);
+      border-radius: 10px;
+      color: #fca5a5;
       font-size: 12px;
-      margin-bottom: 15px;
+      margin-bottom: 16px;
       text-align: center;
+      font-weight: 500;
     }
 
     .success-message {
-      padding: 10px;
-      background: rgba(76, 175, 80, 0.2);
-      border: 1px solid rgba(76, 175, 80, 0.5);
-      border-radius: 8px;
-      color: #4CAF50;
+      padding: 12px;
+      background: rgba(16, 185, 129, 0.1);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      border-radius: 10px;
+      color: #6ee7b7;
       font-size: 12px;
-      margin-bottom: 15px;
+      margin-bottom: 16px;
       text-align: center;
+      font-weight: 500;
     }
 
     .hidden {
@@ -536,15 +827,15 @@
         <img src="icon.png" alt="Arzuno Humanizer" class="logo-icon" />
         <div class="logo-text">
           <div class="brand">ARZUNO</div>
-          <div class="subtitle">HUMANIZER</div>
+          <div class="subtitle">Humanizer</div>
         </div>
       </div>
     </div>
 
-    <!-- Authentication Section (shown when not logged in) -->
+    <!-- Authentication Section -->
     <div id="authSection" class="auth-section">
-      <h2>Welcome to Arzuno Humanizer</h2>
-      <p>Sign in with your Google account to start humanizing your AI-generated text. Get 10,000 free words to begin with!</p>
+      <h2>Welcome Back</h2>
+      <p>Sign in with your Google account to transform AI text into natural, human-like content. Start with 1500 free words!</p>
       
       <button id="loginBtn" class="login-btn">
         <svg class="google-icon" viewBox="0 0 24 24">
@@ -560,76 +851,122 @@
       <div id="authSuccess" class="success-message hidden"></div>
     </div>
 
-    <!-- Premium Status Section (shown when logged in) -->
+    <!-- Status Section -->
     <div id="statusSection" class="status-section hidden">
       <div id="loadingStatus" class="loading">
         <div class="loading-spinner"></div>
-        Loading user data...
+        Loading your account...
       </div>
       
       <div id="userStatus" class="hidden">
         <div class="user-status">
           <div class="user-info">
-            <div class="user-email" id="userEmail">user@example.com</div>
+            <div class="user-avatar">A</div>
+            <div class="user-details">
+              <div class="user-email" id="userEmail">user@example.com</div>
+            </div>
           </div>
           <div class="user-actions">
-            <button class="refresh-btn" id="refreshBtn">🔄</button>
+            <button class="refresh-btn" id="refreshBtn" title="Refresh">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.2"/>
+              </svg>
+            </button>
             <button class="logout-btn" id="logoutBtn">Sign Out</button>
           </div>
         </div>
         
-        <div class="words-status">
-          <div class="words-left" id="wordsLeft">0 words left</div>
-          <div class="premium-badge" id="premiumBadge">Free</div>
+        <div class="premium-status" id="premiumStatusCard">
+          <div class="words-info">
+            <div class="words-label">Available Words</div>
+            <div class="words-left" id="wordsLeft">0 words</div>
+          </div>
+          <div class="premium-badge" id="premiumBadge">
+            <span>Free Plan</span>
+          </div>
         </div>
-        
-        <button class="premium-btn" id="premiumBtn">
-          ⚡ Upgrade to Premium - Unlimited Words
-        </button>
       </div>
 
       <div id="errorMessage" class="error-message hidden"></div>
     </div>
 
-    <!-- Main Content (disabled when not logged in) -->
+    <!-- Main Content -->
     <div id="mainContent" class="content disabled">
       <div class="section">
         <h3>Transform Your Text</h3>
         <p class="description">
-          Paste your AI-generated or robotic text below to make it sound more natural and human-like.
+          Make your AI-generated content sound naturally human.
         </p>
 
         <div class="input-section">
+          <!-- Tone Selector -->
+          <div class="tone-selector">
+            <label for="toneSelect">Select Tone</label>
+            <div class="tone-select-wrapper">
+              <select id="toneSelect" class="tone-select">
+                <option value="default">Humanize (Default)</option>
+                <option value="professional" data-premium="true">Humanize Professional ⭐ Premium</option>
+                <option value="casual" data-premium="true">Humanize Casual ⭐ Premium</option>
+                <option value="seo" data-premium="true">Humanize SEO Optimized ⭐ Premium</option>
+                <option value="friendly" data-premium="true">Humanize Friendly ⭐ Premium</option>
+              </select>
+              <svg class="select-arrow" viewBox="0 0 12 12" fill="none">
+                <path d="M6 9L1 4h10z" fill="#8b5cf6"/>
+              </svg>
+            </div>
+          </div>
+
           <textarea id="inputText" placeholder="Paste your text here to humanize..." rows="6"></textarea>
           <button id="humanizeBtn" class="humanize-btn">
-            <span class="btn-icon">🤖→👤</span>
+            <span class="btn-icon">
+             <img src="icon.png" alt="">
+            </span>
             <span class="btn-text">Humanize Text</span>
             <div class="btn-spinner" id="spinner"></div>
           </button>
         </div>
 
-        <div class="output-section" id="outputSection" class="hidden">
-          <label>Humanized Text:</label>
+        <div class="output-section hidden" id="outputSection">
+          <label>Humanized Result</label>
           <textarea id="outputText" readonly rows="6"></textarea>
           <div class="action-buttons">
-            <button id="copyBtn" class="copy-btn">📋 Copy to Clipboard</button>
-            <button id="clearBtn" class="clear-btn">🗑️ Clear All</button>
+            <button id="copyBtn" class="copy-btn">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+              </svg>
+              Copy
+            </button>
+            <button id="clearBtn" class="clear-btn">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="3 6 5 6 21 6"/>
+                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+              </svg>
+              Clear
+            </button>
           </div>
         </div>
       </div>
 
       <div class="instructions">
-        <h4>💡 How to use:</h4>
+        <h4>💡 Quick Guide</h4>
         <ul>
-          <li><strong>Method 1:</strong> Select text on any webpage → Right-click → Choose "Humanize text"</li>
-          <li><strong>Method 2:</strong> Paste text in the box above and click "Humanize Text"</li>
+          <li><strong>Right-click:</strong> Select text → Right-click → "Humanize text"</li>
+          <li><strong>Direct paste:</strong> Paste text above and click "Humanize Text"</li>
         </ul>
+        <button class="premium-btn" id="premiumBtn">
+          <svg viewBox="0 0 24 24" fill="currentColor">
+            <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
+          </svg>
+          Upgrade to Premium - Unlimited Words
+        </button>
       </div>
+
     </div>
 
     <div class="footer">
-      <div class="version">v1.0</div>
-      <div class="credits">Made with ❤️ for better writing</div>
+      <div class="version">v2.0.0</div>
+      <div class="credits">Powered by Arzuno</div>
     </div>
   </div>
   <script src="popup.js"></script>

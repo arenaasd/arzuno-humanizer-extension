@@ -1,4 +1,4 @@
-// service-worker.js - Updated with authentication system
+// service-worker.js - Updated with tone-based prompts
 
 const API_BASE_URL = 'https://arzuno-humanizer.vercel.app'; // Your API URL
 
@@ -7,7 +7,7 @@ chrome.runtime.onInstalled.addListener(async (details) => {
   console.log('Extension installed/updated:', details.reason);
   
   // Create context menu
-  chrome.contextMenus.create({
+  chrome.contextMenus.create({ 
     id: "humanize-text",
     title: "Humanize text",
     contexts: ["selection"],
@@ -65,6 +65,39 @@ async function getAuthenticatedUser() {
   }
 }
 
+// Generate tone-specific prompt
+function generatePrompt(text, tone = 'default') {
+  const baseInstruction = 'Rewrite the following text to make it sound more natural, fluent, and human-like.';
+  const commonRules = 'Avoid robotic or overly formal phrasing. Don\'t use "-" dashes. Return only the rewritten version without any explanation or labels.';
+  
+  let toneInstruction = '';
+  
+  switch (tone) {
+    case 'professional':
+      toneInstruction = 'Use a formal and professional tone. dont use "-" dashes. Maintain clarity and sophistication while preserving the original meaning. Use business-appropriate language.';
+      break;
+      
+    case 'casual':
+      toneInstruction = 'Use everyday conversational language in a casual and relaxed tone. dont use "-" dashes. Make it sound like a friendly conversation while preserving the original meaning.';
+      break;
+      
+    case 'seo':
+      toneInstruction = 'Optimize for SEO while maintaining natural readability. dont use "-" dashes. Use relevant keywords naturally, ensure good flow, and make it engaging for both readers and search engines. Preserve the original meaning.';
+      break;
+      
+    case 'friendly':
+      toneInstruction = 'Use a warm, friendly, and approachable tone. dont use "-" dashes.  Make it sound welcoming and personable while preserving the original meaning. Use positive and engaging language.';
+      break;
+      
+    case 'default':
+    default:
+      toneInstruction = 'Use more natural, fluent, and human-like. dont use "-" dashes. Use everyday conversational language while preserving the original meaning. Avoid robotic or overly formal phrasing. Return only the rewritten version without any explanation or labels.';
+      break;
+  }
+  
+  return `${baseInstruction} ${toneInstruction} ${commonRules} Text: "${text}"`;
+}
+
 // Handle context menu click
 chrome.contextMenus.onClicked.addListener(async (info, tab) => {
   if (info.menuItemId === "humanize-text" && info.selectionText) {
@@ -79,25 +112,35 @@ chrome.contextMenus.onClicked.addListener(async (info, tab) => {
         return;
       }
 
-      // Check if user has enough words
-      const canUse = await checkWordUsage(info.selectionText, user);
+      // Check if user is premium
+      const isPremium = user.isPremium;
       
-      if (!canUse.allowed) {
-        chrome.tabs.sendMessage(tab.id, {
-          type: canUse.error === 'insufficient_words' ? 'insufficient-words' : 'show-premium-required',
-          message: canUse.message
-        });
-        return;
+      if (!isPremium) {
+        // Only check word usage for non-premium users
+        const canUse = await checkWordUsage(info.selectionText, user);
+        
+        if (!canUse.allowed) {
+          chrome.tabs.sendMessage(tab.id, {
+            type: canUse.error === 'insufficient_words' ? 'insufficient-words' : 'show-premium-required',
+            message: canUse.message
+          });
+          return;
+        }
+      } else {
+        console.log('⭐ Premium user - bypassing word check for context menu');
       }
 
       // Send message to content script to show loading state
       chrome.tabs.sendMessage(tab.id, { type: 'start-humanizing' });
       
+      // Generate prompt with default tone for context menu
+      const enhancedPrompt = generatePrompt(info.selectionText, 'default');
+      
       // Call the API to humanize the text
       const response = await fetch(`${API_BASE_URL}/api/prompt`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ prompt: info.selectionText })
+        body: JSON.stringify({ prompt: enhancedPrompt })
       });
       
       if (!response.ok) {
@@ -106,8 +149,12 @@ chrome.contextMenus.onClicked.addListener(async (info, tab) => {
       
       const data = await response.json();
       
-      // Update word usage
-      await updateWordUsage(info.selectionText, user.email);
+      // Only update word usage for non-premium users
+      if (!isPremium) {
+        await updateWordUsage(info.selectionText, user.email);
+      } else {
+        console.log('⭐ Premium user - skipping word deduction for context menu');
+      }
       
       // Copy the humanized text to clipboard
       chrome.tabs.sendMessage(tab.id, {
@@ -128,7 +175,7 @@ chrome.contextMenus.onClicked.addListener(async (info, tab) => {
 // Handle messages from popup and content script
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message.type === 'enhance-prompt') {
-    handleEnhancePrompt(message.prompt, sendResponse);
+    handleEnhancePrompt(message.prompt, message.tone, sendResponse);
     return true; // Keep port open for async response
   } else if (message.type === 'get-user-data') {
     getUserData(sendResponse);
@@ -140,7 +187,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 });
 
 // Enhanced prompt handler with authentication and word checking
-async function handleEnhancePrompt(prompt, sendResponse) {
+async function handleEnhancePrompt(prompt, tone = 'default', sendResponse) {
   try {
     // Check authentication first
     const user = await getAuthenticatedUser();
@@ -153,22 +200,34 @@ async function handleEnhancePrompt(prompt, sendResponse) {
       return;
     }
 
-    // Check if user has enough words
-    const canUse = await checkWordUsage(prompt, user);
+    // Check if user is premium first - skip word check if premium
+    const isPremium = user.isPremium;
     
-    if (!canUse.allowed) {
-      sendResponse({ 
-        error: canUse.error,
-        message: canUse.message 
-      });
-      return;
+    if (!isPremium) {
+      // Only check word usage for non-premium users
+      const canUse = await checkWordUsage(prompt, user);
+      
+      if (!canUse.allowed) {
+        sendResponse({ 
+          error: canUse.error,
+          message: canUse.message 
+        });
+        return;
+      }
+    } else {
+      console.log('⭐ Premium user detected - bypassing word limit check');
     }
 
+    // Generate tone-specific prompt
+    const enhancedPrompt = generatePrompt(prompt, tone);
+    
+    console.log(`Humanizing with tone: ${tone}`);
+    
     // Call API to humanize text
     const response = await fetch(`${API_BASE_URL}/api/prompt`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ prompt })
+      body: JSON.stringify({ prompt: enhancedPrompt })
     });
     
     if (!response.ok) {
@@ -177,8 +236,12 @@ async function handleEnhancePrompt(prompt, sendResponse) {
     
     const data = await response.json();
     
-    // Update word usage
-    await updateWordUsage(prompt, user.email);
+    // Only update word usage for non-premium users
+    if (!isPremium) {
+      await updateWordUsage(prompt, user.email);
+    } else {
+      console.log('⭐ Premium user - skipping word deduction');
+    }
     
     sendResponse({ result: data.text });
   } catch (err) {
@@ -195,18 +258,46 @@ async function checkWordUsage(text, user) {
   try {
     const wordCount = countWords(text);
     
-    // Check if premium and not expired
-    if (user.isPremium && user.premiumExpiry) {
-      const expiryDate = new Date(user.premiumExpiry);
-      if (expiryDate > new Date()) {
-        return { allowed: true }; // Premium user, unlimited words
+    console.log('Checking word usage for user:', {
+      email: user.email,
+      isPremium: user.isPremium,
+      premiumExpiry: user.premiumExpiry,
+      wordsLeft: user.wordsLeft,
+      wordCount: wordCount
+    });
+    
+    // Check if premium (check both isPremium boolean and premiumExpiry)
+    if (user.isPremium) {
+      // If premiumExpiry exists, check if it's not expired
+      if (user.premiumExpiry) {
+        const expiryDate = new Date(user.premiumExpiry);
+        const now = new Date();
+        console.log('Premium expiry check:', {
+          expiryDate: expiryDate.toISOString(),
+          now: now.toISOString(),
+          isValid: expiryDate > now
+        });
+        
+        if (expiryDate > now) {
+          console.log('✅ Premium user with valid expiry - unlimited access');
+          return { allowed: true }; // Premium user with valid expiry, unlimited words
+        } else {
+          console.log('⚠️ Premium expired, falling back to word limit');
+        }
+      } else {
+        // If no expiry date, just check isPremium flag
+        console.log('✅ Premium user (no expiry set) - unlimited access');
+        return { allowed: true };
       }
     }
     
     // Check free words limit
+    console.log('Checking word limit:', user.wordsLeft, '>=', wordCount);
     if (user.wordsLeft >= wordCount) {
+      console.log('✅ Sufficient words available');
       return { allowed: true };
     } else {
+      console.log('❌ Insufficient words');
       return { 
         allowed: false,
         error: 'insufficient_words',
@@ -223,10 +314,12 @@ async function checkWordUsage(text, user) {
   }
 }
 
-// Update word usage
+// Update word usage (only called for non-premium users)
 async function updateWordUsage(text, email) {
   try {
     const wordCount = countWords(text);
+    
+    console.log(`Updating word usage for free user: ${email}, words: ${wordCount}`);
     
     const response = await fetch(`${API_BASE_URL}/api/user/update-words`, {
       method: 'POST',
@@ -245,7 +338,7 @@ async function updateWordUsage(text, email) {
     }
     
     const result = await response.json();
-    console.log(`Words updated for ${email}: ${wordCount} words used`);
+    console.log(`Words updated for ${email}: ${wordCount} words used, ${result.wordsLeft} remaining`);
     
     return result;
   } catch (error) {

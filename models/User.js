@@ -11,7 +11,7 @@ const UserSchema = new mongoose.Schema({
   },
   wordsLeft: {
     type: Number,
-    default: 10000, // Free words for new user
+    default: 1500, // Free words for new user
     min: 0,
   },
   totalWordsUsed: {
