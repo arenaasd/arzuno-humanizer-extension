@@ -24,7 +24,6 @@ export async function POST(req) {
       // Create new user with free words
       user = await User.create({
         email,
-        wordsLeft: 10000,
         isPremium: false,
       });
       console.log(`✅ New user created: ${email}`);
