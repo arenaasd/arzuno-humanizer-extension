@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack",
-  "build": "next build &&  xcopy extension out /E /I  && ren out\\.next next && xcopy public out\\public /E /I",
+  "build": "next build",
     "start": "next start",
     "lint": "next lint"
   },
